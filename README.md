@@ -128,5 +128,5 @@ d)哪些是合理呢？局限于当前范围内创建的类，例如通讯对象
 
 4)我的开发环境是使用idea的,如果是eclipse来运行本项目就需要:convert to maven project.其它如果还有报错的信息,请自己查看是哪里报错.
 
-
+5)如果出现import javax.servlet.http.HttpServletRequest这个包报错,请在project_struct里面添加libraries：servlet-api,版本自己选择.
 
