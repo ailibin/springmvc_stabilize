@@ -121,8 +121,11 @@ d)哪些是合理呢？局限于当前范围内创建的类，例如通讯对象
 
 ## 注意事项
 1)本项目中使用了ajax来访问标签,数据库工具使用的是mysql,要运行本项目就要配置好mysql数据库,不然会报错.
+
 2)如果Tomcat的port被占用了执行：taskkill /f /t /im java.exe
+
 3)每个功能都有相应的controller来执行,具体的请看demo下面controller类中的注释说明.
+
 4)我的开发环境是使用idea的,如果是eclipse来运行本项目就需要:convert to maven project.其它如果还有报错的信息,请自己查看是哪里报错.
 
 
