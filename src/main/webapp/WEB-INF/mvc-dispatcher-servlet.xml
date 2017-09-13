@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd ">
+
+    <!--指明 controller 所在包，并扫描其中的注解-->
+    <context:component-scan base-package="com.aiitec.demo" use-default-filters="true">
+    </context:component-scan>
+
+    <!-- 静态资源(js、image等)的访问 -->
+    <mvc:default-servlet-handler/>
+
+    <!-- 开启注解 -->
+    <mvc:annotation-driven/>
+
+    <!--ViewResolver 视图解析器-->
+    <!--用于支持Servlet、JSP视图解析-->
+    <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/WEB-INF/pages/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!-- 表示JPA Repository所在的包 -->
+    <jpa:repositories base-package="com.aiitec.demo.model.repository"/>
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="persistenceUnitName" value="defaultPersistenceUnit"/>
+        <property name="packagesToScan" value="com.aiitec.demo.model"/>
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.connection.driver_class">com.mysql.jdbc.Driver</prop>
+                <prop key="hibernate.connection.url">jdbc:mysql://localhost:3306/springdemo?useSSL=false</prop>
+                <prop key="hibernate.connection.username">root</prop>
+                <prop key="hibernate.connection.password">root</prop>
+                <prop key="hibernate.show_sql">false</prop>
+                <prop key="hibernate.connection.useUnicode">true</prop>
+                <prop key="hibernate.connection.characterEncoding">UTF-8</prop>
+                <prop key="hibernate.format_sql">true</prop>
+                <prop key="hibernate.use_sql_comments">true</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <prop key="hibernate.connection.autoReconnect">true</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+                <prop key="connection.autoReconnectForPools">true</prop>
+                <prop key="connection.is-connection-validation-required">true</prop>
+
+                <prop key="hibernate.c3p0.validate">true</prop>
+                <prop key="hibernate.connection.provider_class">
+                    org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider
+                </prop>
+                <prop key="hibernate.c3p0.min_size">5</prop>
+                <prop key="hibernate.c3p0.max_size">600</prop>
+                <prop key="hibernate.c3p0.timeout">1800</prop>
+                <prop key="hibernate.c3p0.max_statements">50</prop>
+                <prop key="hibernate.c3p0.preferredTestQuery">SELECT 1;</prop>
+                <prop key="hibernate.c3p0.testConnectionOnCheckout">true</prop>
+                <prop key="hibernate.c3p0.idle_test_period">3000</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- 事务管理 -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+
+    <!-- 开启事务管理注解 -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <!--配置缓存框架和方法缓存  开始-->
+    <!--SSM缓存-->
+    <bean name="defaultMemcachedClient" class="com.google.code.ssm.CacheFactory">
+        <property name="cacheClientFactory">
+            <bean class="com.google.code.ssm.providers.xmemcached.MemcacheClientFactoryImpl"/>
+        </property>
+        <property name="addressProvider">
+            <bean class="com.google.code.ssm.config.DefaultAddressProvider">
+                <property name="address" value="127.0.0.1:11211"/>
+            </bean>
+        </property>
+        <property name="configuration">
+            <bean class="com.google.code.ssm.providers.xmemcached.XMemcachedConfiguration">
+                <property name="consistentHashing"><!--consistentHashing属性定义了缓存节点的查找方法: 是否使用哈希 -->
+                    <value>true</value>
+                </property>
+                <property name="connectionPoolSize">
+                    <value>1</value>
+                </property>
+                <property name="optimizeGet">
+                    <value>false</value>
+                </property>
+                <property name="optimizeMergeBuffer">
+                    <value>false</value>
+                </property>
+                <property name="mergeFactor">
+                    <value>50</value>
+                </property>
+                <property name="useBinaryProtocol">
+                    <value>true</value>
+                </property>
+                <property name="connectionTimeout">
+                    <value>2000</value>
+                </property>
+                <property name="operationTimeout">
+                    <value>1000</value>
+                </property>
+                <property name="enableHeartBeat">
+                    <value>true</value>
+                </property>
+                <property name="failureMode">
+                    <value>false</value>
+                </property>
+            </bean>
+        </property>
+        <!-- 该Memcached配置的Cache名称 一个应用中存在多个Memcached时，各个配置的cacheName必须不同。如果该值未设，系统默认为default -->
+        <property name="cacheName" value="default"/>
+    </bean>
+
+    <!--这里配置多文件上传-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    <!--此处可以添加的属性有 ：
+    defaultEncoding：设置默认编码
+    maxUploadSize：最大的上传文件大小
+    uploadTempDir：上传文件的临时路径..等等 -->
+    <property name="defaultEncoding" value="utf-8" />
+    <!-- 最大内存大小-->
+    <property name="maxInMemorySize" value="40960"/>
+    <!-- 指定所上传文件的总大小,单位字节。value=-1,表示不限制，注意maxUploadSize属性的限制不是针对单个文件，而是所有文件的容量之和 -->
+    <property name="maxUploadSize" value="10485760000"/>
+    </bean>
+
+
+    <bean class="com.google.code.ssm.Settings"><!-- 这玩意儿在3.2 后，文档可以指定顺序 以及 拦截器 前后执行 - -！暂时没用过，加上不报错 -->
+        <property name="order" value="500"/>
+    </bean>
+
+
+    <context:annotation-config/>
+    <import resource="xmemcached.xml"/>
+    <import resource="classpath:simplesm-context.xml"/>
+
+    <aop:aspectj-autoproxy/>
+    <!--配置缓存框架和方法缓存  结束-->
+</beans>

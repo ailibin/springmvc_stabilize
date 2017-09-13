@@ -1,0 +1,48 @@
+/*添加按钮的样式*/
+.addBtn {
+
+    padding: 4px 10px;
+    height: 27px;
+    line-height: 27px;
+    position: relative;
+    cursor: pointer;
+    color: #888;
+    background: #55C517;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+
+}
+
+/*上传按钮的样式*/
+.uploadBtn {
+
+    padding: 4px 10px;
+    height: 27px;
+    line-height: 27px;
+    position: relative;
+    cursor: pointer;
+    color: #888;
+    background: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/*删除按钮的样式*/
+.deleteBtn {
+
+    padding: 4px 10px;
+    height: 27px;
+    line-height: 27px;
+    position: relative;
+    cursor: pointer;
+    color: #888;
+    background: #CE000C;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.imgUrl{
+    display: none;
+    background: none;
+    border: none;
+}
